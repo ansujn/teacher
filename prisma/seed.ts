@@ -3,8 +3,15 @@ import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) throw new Error("DATABASE_URL is not set");
+const connectionString =
+  process.env.DATABASE_URL ??
+  process.env.POSTGRES_PRISMA_URL ??
+  process.env.POSTGRES_URL;
+if (!connectionString) {
+  throw new Error(
+    "No database URL found. Set DATABASE_URL or POSTGRES_PRISMA_URL."
+  );
+}
 const adapter = new PrismaPg(connectionString);
 const prisma = new PrismaClient({ adapter });
 
