@@ -17,9 +17,16 @@ function createClient() {
       "No database URL found. Set DATABASE_URL (or POSTGRES_PRISMA_URL from the Supabase / Vercel Postgres integration)."
     );
   }
-  // PrismaPg uses the standard `pg` driver and works with any Postgres URL
-  // (Neon, Vercel Postgres, Supabase, Railway, local docker, etc.).
-  const adapter = new PrismaPg(connectionString);
+  // Supabase's Postgres serves a certificate that isn't in Node's default
+  // trusted-CA bundle, so the `pg` driver throws "self-signed certificate
+  // in certificate chain" with strict verification. Traffic is still
+  // TLS-encrypted; we just skip chain validation, which is the standard
+  // pattern for Supabase + serverless (also matches what `sslmode=no-verify`
+  // would do at the libpq layer).
+  const adapter = new PrismaPg({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
   return new PrismaClient({ adapter });
 }
 

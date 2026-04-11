@@ -12,7 +12,10 @@ if (!connectionString) {
     "No database URL found. Set DATABASE_URL or POSTGRES_PRISMA_URL."
   );
 }
-const adapter = new PrismaPg(connectionString);
+const adapter = new PrismaPg({
+  connectionString,
+  ssl: { rejectUnauthorized: false },
+});
 const prisma = new PrismaClient({ adapter });
 
 function daysFromNow(days: number, hours = 18, minutes = 30) {
