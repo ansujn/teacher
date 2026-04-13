@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(120),
@@ -33,10 +32,17 @@ export async function submitContact(
     };
   }
 
-  try {
-    await prisma.contactSubmission.create({ data: parsed.data });
-    return { ok: true };
-  } catch {
-    return { ok: false, error: "Could not send message. Try again." };
-  }
+  // Phase 1: log submissions to Vercel Runtime Logs. Find them in the
+  // Vercel dashboard under your project → Logs. Filter by `[contact-form]`.
+  //
+  // Phase 2 — swap this for one of:
+  //   - Resend / SendGrid: email yourself directly
+  //   - Slack / Discord webhook: real-time notifications
+  //   - Database write: persist to Postgres/Supabase
+  console.log(
+    "[contact-form]",
+    JSON.stringify({ ...parsed.data, receivedAt: new Date().toISOString() })
+  );
+
+  return { ok: true };
 }

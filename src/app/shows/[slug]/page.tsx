@@ -5,8 +5,12 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getShowBySlug } from "@/lib/queries";
+import { getShowBySlug, getAllShowSlugs } from "@/lib/queries";
 import { formatDate } from "@/lib/format";
+
+export async function generateStaticParams() {
+  return getAllShowSlugs();
+}
 
 export async function generateMetadata({
   params,

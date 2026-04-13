@@ -2,8 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { getNewsBySlug } from "@/lib/queries";
+import { getNewsBySlug, getAllNewsSlugs } from "@/lib/queries";
 import { formatDate } from "@/lib/format";
+
+export async function generateStaticParams() {
+  return getAllNewsSlugs();
+}
 
 export async function generateMetadata({
   params,
